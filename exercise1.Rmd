@@ -10,16 +10,60 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Import the data and convert it to dataframe
 
-```{r cars}
-
+```{r}
+myData <- read.csv("refine.csv")
+as.data.frame(myData)
 ```
 
-## Including Plots
+Standardize all company names
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+library(dplyr)
+library(tidyr)
+unique(myData$company)
+myData <- arrange(myData, company)
+myData <- myData %>%
+  mutate(company= replace(company, 1:7, "akzo"),
+         company = replace(company, 8:16, 'philips'),
+         company = replace(company, 17:20, "unilever"),
+         company = replace(company, 21:25, "van houten"))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Separate product code and number
+```{r}
+myData <- myData %>%
+  mutate(product_code = strtrim(Product.code...number, 1),
+         product_number = abs(extract_numeric(Product.code...number)))
+```
+Add product names
+
+```{r}
+myData <- myData %>%
+  mutate(product_category = ifelse(product_code == "p", "Smartphone",
+                                   ifelse(product_code =="v", "TV",
+                                          ifelse(product_code == "x", "Laptop", "Tablet"))))
+```
+
+Create full address
+
+```{r}
+myData <- myData %>%
+  mutate(full_address = paste(address, city, country, sep = ", "))
+```
+
+
+create dummy variables
+
+```{r}
+myData <- myData %>%
+  mutate(company_philips = as.numeric(company == "philips"),
+         company_akzo = as.numeric(company == "akzo"),
+         company_unilever = as.numeric(company == "unilever"),
+         company_vanhouten = as.numeric(company == "van houten"),
+         product_smartphone = as.numeric(product_category == "Smartphone"),
+         product_TV = as.numeric(product_category == "TV"),
+         product_laptop = as.numeric(product_category == "Laptop"),
+         product_tablet = as.numeric(product_category == "Tablet"))
+```
+
+

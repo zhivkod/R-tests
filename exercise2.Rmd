@@ -1,0 +1,26 @@
+---
+title: "exercise2"
+author: "Zhivko Dimitrov"
+date: "31 March 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+titanicData <- read.csv("titanic_original.csv")
+library(dplyr)
+library(tidyr)
+as.data.frame(titanicData)
+```
+port of embarkation missing values
+
+```{r}
+titanicData$embarked[titanicData$embarked == ""] <- "S"
+```
+
+
