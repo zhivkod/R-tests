@@ -22,5 +22,27 @@ port of embarkation missing values
 ```{r}
 titanicData$embarked[titanicData$embarked == ""] <- "S"
 ```
+mean of age to replace missing values
+
+```{r}
+titanicData <- titanicData %>%
+  replace_na(list(age = mean(titanicData$age, na.rm = TRUE)))
+```
+
+NA to replace missing boat values
+
+```{r}
+titanicData$boat[titanicData$boat == ""] <- NA
+```
+
+create dummy variable for cabins
+
+```{r}
+titanicData <- titanicData %>%
+  mutate(has_cabin_number = ifelse(titanicData$cabin =="", 0, 1))
+```
+
+
+
 
 
